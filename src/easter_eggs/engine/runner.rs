@@ -9,7 +9,7 @@ use ratatui::backend::CrosstermBackend;
 use ratatui::Terminal;
 
 use super::game::{Game, GameState};
-use super::input::poll_input;
+use super::input::InputState;
 use super::scores;
 
 /// Fixed tick duration (~60ms ≈ ~16.6 ticks/sec).
@@ -42,11 +42,13 @@ fn game_loop(
     terminal: &mut Terminal<CrosstermBackend<io::Stdout>>,
     game: &mut dyn Game,
 ) -> io::Result<()> {
+    let mut input_state = InputState::new();
+    
     loop {
         let tick_start = Instant::now();
 
         // 1. Poll input (use most of the tick budget for better responsiveness)
-        let inputs = poll_input(Duration::from_millis(50));
+        let inputs = input_state.poll(Duration::from_millis(50));
 
         // 2. Advance game state - process all inputs
         let mut state = GameState::Running;

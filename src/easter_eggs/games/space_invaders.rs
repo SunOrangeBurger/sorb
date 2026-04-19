@@ -21,6 +21,12 @@ struct Laser {
     vx: f32, // velocity x for relative motion
 }
 
+struct Interception {
+    x: f32,
+    y: f32,
+    timer: u32,
+}
+
 pub struct SpaceInvadersGame {
     ship_x: f32,
     ship_vx: f32, // ship velocity for relative motion
@@ -40,8 +46,9 @@ pub struct SpaceInvadersGame {
     consecutive_hits: u32,
     laser_active: bool,
     laser_timer: u32,
-    shots_fired: u32, // Track total shots to detect misses
-    auto_shoot: bool, // Enable auto-shooting mode
+    shots_fired: u32,
+    auto_shoot: bool,
+    interceptions: Vec<Interception>,
 }
 
 impl SpaceInvadersGame {
@@ -66,7 +73,8 @@ impl SpaceInvadersGame {
             laser_active: false,
             laser_timer: 0,
             shots_fired: 0,
-            auto_shoot: true, // Enable auto-shoot by default
+            auto_shoot: false, // Disable auto-shoot by default
+            interceptions: Vec::new(),
         };
         sim.init_wave();
         sim
@@ -191,17 +199,8 @@ impl Game for SpaceInvadersGame {
         // Move alien lasers
         for al in self.alien_lasers.iter_mut() {
             al.1 += 0.5;
-            // Alien laser hit player?
-            if al.1 >= SHIP_Y && al.1 <= SHIP_Y + 1.0 && al.0 >= self.ship_x && al.0 <= self.ship_x + 2.0 {
-                self.lives = self.lives.saturating_sub(1);
-                al.1 = self.height as f32 + 10.0; // move off-screen
-                if self.lives == 0 {
-                    self.game_over = true;
-                }
-            }
         }
-        self.alien_lasers.retain(|al| al.1 <= self.height as f32);
-
+        
         // Bullet interception - player lasers can hit alien lasers
         let mut hit_alien_laser_indices = vec![];
         let mut hit_player_laser_indices = vec![];
@@ -209,9 +208,24 @@ impl Game for SpaceInvadersGame {
             for (al_idx, al) in self.alien_lasers.iter().enumerate() {
                 let dx = (pl.x - al.0).abs();
                 let dy = (pl.y - al.1).abs();
-                if dx < 0.5 && dy < 0.5 {
+                if dx < 1.0 && dy < 1.0 {
                     hit_alien_laser_indices.push(al_idx);
                     hit_player_laser_indices.push(pl_idx);
+                    
+                    // Create interception animation
+                    self.interceptions.push(Interception {
+                        x: (pl.x + al.0) / 2.0,
+                        y: (pl.y + al.1) / 2.0,
+                        timer: 0,
+                    });
+                    
+                    // If interception is too close to player (within 3 units), take damage
+                    if al.1 >= SHIP_Y - 3.0 {
+                        self.lives = self.lives.saturating_sub(1);
+                        if self.lives == 0 {
+                            self.game_over = true;
+                        }
+                    }
                 }
             }
         }
@@ -226,6 +240,24 @@ impl Game for SpaceInvadersGame {
         for &idx in hit_player_laser_indices.iter().rev() {
             self.player_lasers.remove(idx);
         }
+        
+        // Check alien laser hit player (only if not already intercepted)
+        for al in self.alien_lasers.iter_mut() {
+            if al.1 >= SHIP_Y && al.1 <= SHIP_Y + 1.0 && al.0 >= self.ship_x && al.0 <= self.ship_x + 2.0 {
+                self.lives = self.lives.saturating_sub(1);
+                al.1 = self.height as f32 + 10.0; // move off-screen
+                if self.lives == 0 {
+                    self.game_over = true;
+                }
+            }
+        }
+        self.alien_lasers.retain(|al| al.1 <= self.height as f32);
+        
+        // Update interception animations
+        self.interceptions.retain_mut(|i| {
+            i.timer += 1;
+            i.timer < 8 // Keep for 8 ticks
+        });
 
         // Check player laser hits alien
         let mut hit_alien_indices = vec![];
@@ -439,6 +471,26 @@ impl Game for SpaceInvadersGame {
              if ly < inner.y + inner.height {
                  frame.render_widget(Paragraph::new("v").style(Style::default().fg(Color::Red)), Rect::new(lx, ly, 1, 1));
              }
+        }
+        
+        // Interception animations
+        for i in &self.interceptions {
+            let ix = offset_x + (i.x as u16) * cell_width;
+            let iy = offset_y + i.y as u16;
+            let explosion_char = match i.timer {
+                0..=2 => "*",
+                3..=5 => "+",
+                _ => "·",
+            };
+            let explosion_color = match i.timer {
+                0..=2 => Color::Yellow,
+                3..=5 => Color::LightYellow,
+                _ => Color::White,
+            };
+            frame.render_widget(
+                Paragraph::new(explosion_char).style(Style::default().fg(explosion_color).add_modifier(Modifier::BOLD)),
+                Rect::new(ix, iy, 1, 1)
+            );
         }
     }
 

@@ -29,7 +29,7 @@ pub enum GameState {
 }
 
 /// Normalized input events consumed by games.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Input {
     Up,
     Down,
