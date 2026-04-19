@@ -1,4 +1,4 @@
-# sorb ⚡
+# sorb
 
 A custom, robust UNIX-style Rust shell containing a hidden, zero-external-dependency terminal game engine.
 
@@ -37,7 +37,7 @@ chsh -s /usr/local/bin/sorb
 *(Note: Log out and log back in, or open a new terminal window for the changes to take effect.)*
 
 
-## 🤫 Secret Games (Easter Eggs)
+## Secret Games (Easter Eggs)
 
 `sorb` contains a custom-built, raw-mode terminal game engine. If the shell detects a specific hidden command string, it pauses external execution, drops the terminal into raw alternative-screen mode, and launches a real-time fixed-step game loop running at ~60 ticks per second natively in the UI.
 
