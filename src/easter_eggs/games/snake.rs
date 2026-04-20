@@ -201,11 +201,11 @@ impl Game for SnakeGame {
         // --- Top bar: Score ---
         let score_text = if self.game_over {
             format!(
-                "  🐍 GAME OVER!  Score: {}  —  Press SPACE to continue, Q to quit  ",
+                "  Ororborus? or whatever they call it!  Score: {}  —  Press SPACE to continue, Q to quit  ",
                 self.score
             )
         } else {
-            format!("  🐍 Snake  |  Score: {}  |  Q to quit  ", self.score)
+            format!(" SnakeekanS  |  Score: {}  |  Q to quit  ", self.score)
         };
         let score_bar = Paragraph::new(score_text)
             .style(

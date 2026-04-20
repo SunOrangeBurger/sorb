@@ -299,9 +299,9 @@ impl Game for TetrisGame {
         let outer = Layout::vertical([Constraint::Length(3), Constraint::Min(1), Constraint::Length(3)]).split(area);
 
         let score_text = if self.game_over {
-            format!("  🧱 GAME OVER!  Score: {}  —  Press SPACE to continue, Q to quit  ", self.score)
+            format!("  You're all bricked up....wait no-!  Score: {}  —  Press SPACE to continue, Q to quit  ", self.score)
         } else {
-            format!("  🧱 Tetris  |  Score: {}  |  Speed: {}  |  Arrows to move/rotate, SPACE to drop  ", self.score, 11 - self.fall_speed)
+            format!("  Tetris  |  Score: {}  |  Speed: {}  |  Arrows to move/rotate, SPACE to drop  ", self.score, 11 - self.fall_speed)
         };
         
         let score_bar = Paragraph::new(score_text).style(Style::default().fg(Color::White).bg(Color::DarkGray).add_modifier(Modifier::BOLD)).alignment(Alignment::Center).block(Block::default());

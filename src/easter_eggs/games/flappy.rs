@@ -209,7 +209,7 @@ impl Game for FlappyGame {
         .split(area);
 
         let score_text = if self.game_over {
-            format!("  🐦 GAME OVER!  Score: {}  —  Press SPACE to continue, Q to quit  ", self.score)
+            format!(" 2 pillars 1 bird, wait where have I heard that before?!  Score: {}  —  Press SPACE to continue, Q to quit  ", self.score)
         } else {
             let difficulty = match self.score {
                 0..=9 => "Easy",
@@ -217,7 +217,7 @@ impl Game for FlappyGame {
                 20..=29 => "Hard",
                 _ => "Expert",
             };
-            format!("  🐦 Flappy  |  Score: {}  |  Difficulty: {}  |  SPACE to flap, Q to quit  ", self.score, difficulty)
+            format!("  Flappy bird |  Score: {}  |  Difficulty: {}  |  SPACE to flap, Q to quit  ", self.score, difficulty)
         };
         
         let score_bar = Paragraph::new(score_text)
@@ -237,7 +237,7 @@ impl Game for FlappyGame {
 
         self.render_game(frame, inner);
 
-        let controls = Paragraph::new("  SPACE to flap  |  Q / Esc to quit  ")
+        let controls = Paragraph::new("  SPACE to flapppp  |  Q / Esc to quit  ")
             .style(Style::default().fg(Color::DarkGray))
             .alignment(Alignment::Center);
         frame.render_widget(controls, outer[2]);

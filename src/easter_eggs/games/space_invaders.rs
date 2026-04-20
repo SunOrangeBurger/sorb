@@ -376,7 +376,7 @@ impl Game for SpaceInvadersGame {
         .split(area);
 
         let score_text = if self.game_over {
-            format!("  👾 GAME OVER!  Score: {} (Wave: {})  —  Press SPACE to continue, Q to quit  ", self.score, self.wave)
+            format!("  Are they some kind of space invaders??!  Score: {} (Wave: {})  —  Press SPACE to continue, Q to quit  ", self.score, self.wave)
         } else {
             let difficulty = match self.wave {
                 1..=2 => "Easy",
@@ -385,13 +385,13 @@ impl Game for SpaceInvadersGame {
                 _ => "Expert",
             };
             let combo_text = if self.laser_active {
-                format!(" ⚡LASER ACTIVE⚡ ")
+                format!(" LASER ACTIVE ")
             } else if self.consecutive_hits > 0 {
                 format!(" Combo: {}/10 ", self.consecutive_hits)
             } else {
                 String::new()
             };
-            format!("  👾 Invaders  |  Lives: {}  |  Score: {}  |  Wave: {} ({}){}  |  ← → move, ↑/SPACE shoot  ", self.lives, self.score, self.wave, difficulty, combo_text)
+            format!("  Precursors  |  Lives: {}  |  Score: {}  |  Wave: {} ({}){}  |  ← → move, ↑/SPACE shoot  ", self.lives, self.score, self.wave, difficulty, combo_text)
         };
         
         let score_bar = Paragraph::new(score_text)
