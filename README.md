@@ -9,7 +9,7 @@ Tab completion works across built-in commands, system executables in PATH, and f
 
 ## Installation & Usage
 
-### Quick Install
+### Quick Install(not functional at the momement, still working on it!!)
 Run the installation script to build and install sorb to `~/.local/bin`:
 
 ```bash
