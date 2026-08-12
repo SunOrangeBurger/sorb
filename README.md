@@ -34,6 +34,21 @@ export PATH="$HOME/.local/bin:$PATH"
    - `cd <path>` (supports `~` for home directory)
    - `exit`
 
+### Chat Mode
+`sorb` now includes a built-in terminal chat feature under `src/chat`.
+
+Use the shell command:
+```bash
+sorb-chat server <port>
+```
+This starts the chat server listening on `0.0.0.0:<port>` (defaults to `8080`). The server prints the local connection string for clients.
+
+Connect from another machine or terminal using:
+```bash
+sorb-chat client <host> <port> <username>
+```
+The client enters a text-based chat UI. Press `Enter` to send a message, `Esc` to quit, or type `/quit` or `/q`.
+
 ### Tab Completion
 Press `Tab` while typing to trigger intelligent completion:
 *   Built-in commands (`cd`, `exit`)
