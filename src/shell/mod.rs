@@ -6,13 +6,12 @@ use rustyline::error::ReadlineError;
 use rustyline::DefaultEditor;
 
 use crate::easter_eggs;
+use crate::chat;
 
 pub fn run() {
     let mut rl = DefaultEditor::new().expect("Failed to initialize rustyline");
 
     loop {
-        // Render aesthetic colored prompt
-        // \x1b[36m = Cyan, \x1b[32m = Green, \x1b[0m = Reset
         let prompt = if let Ok(cwd) = env::current_dir() {
             format!("\x1b[36msorb:\x1b[32m{}\x1b[0m $ ", cwd.display())
         } else {
@@ -26,10 +25,8 @@ pub fn run() {
                     continue;
                 }
 
-                // Add to history
                 let _ = rl.add_history_entry(input);
 
-                // Parse input robustly handling quotes
                 match shell_words::split(input) {
                     Ok(words) => {
                         if words.is_empty() {
@@ -43,12 +40,18 @@ pub fn run() {
                             continue;
                         }
 
-                        // 2. Try easter egg commands
+                        // 2. Try chat command
+                        if cmd == "sorb-chat" {
+                            chat::run_chat(args);
+                            continue;
+                        }
+
+                        // 3. Try easter egg commands
                         if easter_eggs::try_launch(cmd) {
                             continue;
                         }
 
-                        // 3. Fallback to external process execution
+                        // 4. Fallback to external process execution
                         exec::execute_external(cmd, args);
                     }
                     Err(e) => {
@@ -57,11 +60,9 @@ pub fn run() {
                 }
             }
             Err(ReadlineError::Interrupted) => {
-                // Ctrl+C during prompt
                 continue;
             }
             Err(ReadlineError::Eof) => {
-                // Ctrl+D
                 println!("exit");
                 break;
             }
